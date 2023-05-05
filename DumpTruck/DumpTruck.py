@@ -17,7 +17,7 @@ class utility:
         retvalue = f'{diffrence}.exe'
         return retvalue
       
-  def get_PID(process):
+  def getPID(process):
     try:
       retlist = []
       output = os.popen(f'powershell ps -Name {process}').read()
@@ -36,6 +36,7 @@ class utility:
 class commands:
   
   def hexdump(file):
+    # Creates a hex dump from given file
     with open(file, 'rb') as f:
       content = f.read()
       bytes = 0
@@ -100,4 +101,14 @@ class commands:
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
+  
+  def killProcess(name):
+    PIDlist = utility.getPID(name)
+    for PID in PIDlist:
+      try:
+        os.system(f'taskkill /F /PID {PID}')
+      except Exception as e:
+        print(f'ERROR: An unknown error was encountered. \n{e}\n')
+        sys.exit(1)
+
 
