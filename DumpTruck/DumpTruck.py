@@ -1,5 +1,5 @@
 # TODO: Add arghandler and if __name__ == '__main__'
-# TODO: Add a folder dump command where a file will be created 
+# TODO: Add a folder dump command where a file will be created
 # with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
 # TODO: Add exceptions and sys.exit(1) and sys.exit(0)
 
@@ -7,7 +7,7 @@ import os, sys
 
 
 class utility:
-  
+
   def nameFinder(PID):
     output = os.popen(f'tasklist /svc /FI "PID eq {PID}"').read()
     for line in str(output).splitlines():
@@ -16,7 +16,7 @@ class utility:
         diffrence = line[0:index]
         retvalue = f'{diffrence}.exe'
         return retvalue
-      
+
   def getPID(process):
     try:
       retlist = []
@@ -34,9 +34,13 @@ class utility:
 
 
 class commands:
-  
+
   def hexdump(file):
     # Creates a hex dump from given file
+    if not os.path.exists(file):
+      print(f'ERROR: Dumper cannot find file {file}.')
+      sys.exit(1)
+
     with open(file, 'rb') as f:
       content = f.read()
       bytes = 0
@@ -56,7 +60,7 @@ class commands:
               out.write(chr(b))
             else:
               out.write('*')
-          line=[]
+          line = []
           out.write('\n')
 
   def dumplibs():
@@ -101,14 +105,15 @@ class commands:
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
-  
+
   def killProcess(name):
     PIDlist = utility.getPID(name)
     for PID in PIDlist:
       try:
-        os.system(f'taskkill /F /PID {PID}')
+        os.popen(f'taskkill /F /PID {PID}')
       except Exception as e:
         print(f'ERROR: An unknown error was encountered. \n{e}\n')
         sys.exit(1)
 
 
+commands.killProcess('DyKnow')
