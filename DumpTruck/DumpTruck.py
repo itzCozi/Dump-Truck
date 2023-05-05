@@ -1,53 +1,103 @@
-from pympler import muppy, summary
+# TODO: Add arghandler and if __name__ == '__main__'
+# TODO: Add a folder dump command where a file will be created 
+# with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
+# TODO: Add exceptions and sys.exit(1) and sys.exit(0)
+
+import os, sys
 
 
-class memory:
-   
-  # Heap dump (https://zendesk.engineering/hunting-for-memory-leaks-in-python-applications-6824d0518774)
-  def heapDump():
-    all_objects = muppy.get_objects()
-    sum1 = summary.summarize(all_objects)
-    # Prints out a summary of the large objects
-    summary.print_(sum1)
-    # Get references to certain types of objects such as dataframe
-    dataframes = [ao for ao in all_objects if isinstance(ao, pd.DataFrame)]
-    for d in dataframes:
-      print d.columns.values
-      print len(d)
-
-  # This is how to hex dump (https://gist.github.com/mgeeky/6a8fa7814efb6c8ad783c3c76c791c4c)
-  def memoryDump(ptr, num):
-    import ctypes
-    
-    s = ''
-    n = 0
-    lines = []
-    data = list((num * ctypes.c_byte).from_address(ptr))
-
-    if len(data) == 0:
-        return '<empty>'
-
-    for i in range(0, num, 16):
-        line = ''
-        line += '%04x | ' % (i)
-        n += 16
-
-        for j in range(n-16, n):
-            if j >= len(data): break
-            line += '%02x ' % abs(data[j])
-
-        line += ' ' * (3 * 16 + 7 - len(line)) + ' | '
-
-        for j in range(n-16, n):
-            if j >= len(data): break
-            c = data[j] if not (data[j] < 0x20 or data[j] > 0x7e) else '.'
-            line += '%c' % c
-
-        lines.append(line)
-    return '\n'.join(lines)
+class utility:
+  
+  def nameFinder(PID):
+    output = os.popen(f'tasklist /svc /FI "PID eq {PID}"').read()
+    for line in str(output).splitlines():
+      if '.exe' in line:
+        index = line.find('.exe')
+        diffrence = line[0:index]
+        retvalue = f'{diffrence}.exe'
+        return retvalue
+      
+  def get_PID(process):
+    try:
+      retlist = []
+      output = os.popen(f'powershell ps -Name {process}').read()
+      for line in output.splitlines():
+        if '.' in line:
+          index = line.find('  1 ')
+          diffrence = line[0:index]
+          list = diffrence.split('  ')
+          retlist.append(list[-1].replace(' ', ''))
+      return retlist
+    except Exception as e:
+      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      sys.exit(1)
 
 
-addr = int('0x' + open('/proc/self/maps', 'r').readlines()[0].split('-')[0], 16)
-print 'Hex dump from 0x%016x' % addr
+class commands:
+  
+  def hexdump(file):
+    with open(file, 'rb') as f:
+      content = f.read()
+      bytes = 0
+      line = []
 
-print hex_dump_memory(addr, 256)
+    with open('hexdump.txt', 'a') as out:
+      for byte in content:
+        bytes += 1
+        line.append(byte)
+        # For every byte print 2 hex digits without the x
+        out.write('{0:0{1}x}'.format(byte, 2))
+
+        if bytes % 16 == 0:
+          out.write(' |  ')
+          for b in line:
+            if b >= 32 and b <= 126:
+              out.write(chr(b))
+            else:
+              out.write('*')
+          line=[]
+          out.write('\n')
+
+  def dumplibs():
+    # Gets all .dll files on base_dir
+    dll_list = []
+    base_dir = 'C:'
+    for r, d, f in os.walk(base_dir):
+      for file in f:
+        if file.endswith('.dll'):
+          item = f'{r}/{file}'
+          dll_list.append(item)
+
+    with open('libdump.txt', 'a') as out:
+      for item in dll_list:
+        out.write(f'{item}\n')
+
+  def getProcesses():
+    # Get all running processes
+    try:
+      iterated = []
+      retlist = []
+      output = os.popen('wmic process get description, processid').read()
+      print('Please wait this may take a moment...')
+      for line in output.splitlines():
+        if '.exe' in line:
+          index = line.find('.exe')
+          item = line[index + 5:].replace(' ', '')
+          itemobj = utility.nameFinder(item)
+          if not itemobj in iterated:
+            retlist.append(itemobj)
+          else:
+            continue
+          iterated.append(itemobj)
+        else:
+          output = output.replace(line, '')
+      for item in retlist:
+        if item == None:
+          retlist.remove(item)
+        else:
+          with open('processdump.txt', 'a') as out:
+            out.write(f'{item}\n')
+    except Exception as e:
+      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      sys.exit(1)
+
