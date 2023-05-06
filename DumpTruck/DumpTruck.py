@@ -1,7 +1,9 @@
 # TODO: Add a folder dump command where a file will be created
 # with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
-# TODO: Add completion and other outputs to the console
+# TODO: Add more outputs to the console
 # TODO: Create a help command
+# TODO: Work on readme.md
+# TODO: Add PID to getprocesses output
 import os, sys
 import signal
 
@@ -68,6 +70,7 @@ class commands:
               out.write('*')
           line = []
           out.write('\n')
+      print(f'Hexdump created on {file} at {files.hexdump}.')
 
   def dumplibs():
     # Gets all .dll files on base_dir
@@ -83,6 +86,7 @@ class commands:
       with open(files.libdump, 'a') as out:
         for item in dll_list:
           out.write(f'{item}\n')
+        print(f'Library dump created for {base_dir} at {files.libdump}.')
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
@@ -113,6 +117,7 @@ class commands:
         else:
           with open(files.processdump, 'a') as out:
             out.write(f'{item}\n')
+      print(f'Running processes have been logged at {files.processdump}.')
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
@@ -124,6 +129,7 @@ class commands:
     for PID in PIDlist:
       try:
         os.kill(int(PID), signal.SIGTERM)
+        print(f'Process {name} has been killed.')
       except Exception as e:
         print(f'ERROR: An unknown error was encountered. \n{e}\n')
         sys.exit(1)
