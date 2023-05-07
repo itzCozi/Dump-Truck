@@ -3,9 +3,9 @@
 # TODO: Add completion and other outputs to the console
 # TODO: Create a help command
 # TODO: Work on readme.md
-# TODO: Add PID to getprocesses output
 import os, sys
 import signal
+import time
 
 
 class files:
@@ -94,7 +94,7 @@ class commands:
   def getProcesses():
     # Get all running processes
     try:
-      iterated = []
+      iterated = set()
       retlist = []
       output = os.popen('wmic process get description, processid').read()
       print('Please wait this may take a moment...')
@@ -107,7 +107,7 @@ class commands:
             retlist.append(itemobj)
           else:
             continue
-          iterated.append(itemobj)
+          iterated.add(itemobj)
         else:
           output = output.replace(line, '')
 
@@ -118,11 +118,13 @@ class commands:
           with open(files.processdump, 'a') as out:
             out.write(f'{item}\n')
       print(f'Running processes have been logged at {files.processdump}.')
+
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
 
   def killProcess(name):
+    # Ends given process and prints completion
     if name.endswith('.exe'):
       name = name.replace('.exe', '')
     PIDlist = utility.getPID(name)
@@ -142,14 +144,12 @@ class driver:
       try:
         arg1 = sys.argv[1]
         arg2 = sys.argv[2]
-        arg3 = sys.argv[3]
       except:
         pass
     if __file__.endswith('.exe'):
       try:
         arg1 = sys.argv[0]
         arg2 = sys.argv[1]
-        arg3 = sys.argv[2]
       except:
         pass
 
