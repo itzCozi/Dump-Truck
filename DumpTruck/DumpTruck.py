@@ -1,7 +1,5 @@
 # TODO: Add a folder dump command where a file will be created
 # with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
-# TODO: Add rm-running command that will kill and delete 
-# given process if running or delete if not running
 # TODO: Work on readme.md
 import os, sys
 import signal
@@ -15,6 +13,40 @@ class files:
 
 
 class utility:
+
+  def processPath(process):
+    if '.exe' in process:
+      process = process[:-4]
+    try:
+      out = os.popen(f'powershell (Get-Process {process}).Path').read()
+      for line in out.splitlines():
+        if os.path.exists(line):
+          return line
+    except Exception as e:
+      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      sys.exit(1)
+
+  def getProcesses():
+    try:
+      iterated = set()
+      retlist = []
+      output = os.popen('wmic process get description, processid').read()
+      print('Please wait this may take a moment...')
+
+      for line in output.splitlines():
+        if '.exe' in line:
+          index = line.find('.exe')
+          item = line[index + 5:].replace(' ', '')
+          itemobj = utility.nameFinder(item)
+          if itemobj and itemobj not in iterated:
+            retlist.append(itemobj)
+            iterated.add(itemobj)
+      
+      return retlist
+    except Exception as e:
+      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      sys.exit(1)
+
 
   def nameFinder(PID):
     output = os.popen(f'tasklist /svc /FI "PID eq {PID}"').read()
@@ -117,11 +149,27 @@ Below is an example of how to pass arguments to dump-truck:
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
+      
+  def removeRunning(process):
+    # Kills a running process and then deletes it
+    proc_path = utility.processPath(process)
+    if not '.exe' in process:
+      process = f'{process}.exe'
+    else:
+      running = utility.getProcesses()
+      
+      try:
+        if process in running:
+          commands.killProcess(process)
+        time.sleep(1)
+        os.remove(proc_path)
+      except Exception as e:
+        print(f'ERROR: An unknown error was encountered. \n{e}\n')
+        sys.exit(1)
 
-  def getProcesses():
+  def getRunning():
     # Get all running processes
     try:
-      st = time.time()
       iterated = set()
       retlist = []
       output = os.popen('wmic process get description, processid').read()
@@ -145,7 +193,6 @@ Below is an example of how to pass arguments to dump-truck:
         else:
           with open(files.processdump, 'a') as out:
             out.write(f'{item}\n')
-      print("--- %s seconds ---" % (time.time() - st))
       print(f'Running processes have been logged at {files.processdump}.')
 
     except Exception as e:
@@ -203,9 +250,22 @@ class driver:
         except Exception as e:
           print(f'ERROR: An unknown error was encountered. \n{e}\n')
           sys.exit(1)
+      elif arg1 == 'rm-running':
+        try:
+          if not arg2.endswith('.exe'):
+            print(f'ERROR: To use rm-running you must pass a .exe file.')
+            sys.exit(0)
+          commands.removeRunning(arg2)
+        except Exception as e:
+          if not os.path.exists(arg2):
+            print(f'ERROR: Dumper cannot find {arg2} in file-system.')
+            sys.exit(0)
+          else:
+            print(f'ERROR: An unknown error was encountered. \n{e}\n')
+            sys.exit(1)
       elif arg1 == 'get-running':
         try:
-          commands.getProcesses()
+          commands.getRunning()
           sys.exit(0)
         except Exception as e:
           print(f'ERROR: An unknown error was encountered. \n{e}\n')
