@@ -1,7 +1,7 @@
 # TODO: Test and read through folderdump on home PC
 # TODO: Update help command's print statment
 # TODO: Release PDLparse to twine after review (May 8th)
-# TODO: Add repo banner from pintrest just find the image again
+# TODO: Add repo/readme banner from pintrest just find the image again
 import os, sys
 import signal
 import time
