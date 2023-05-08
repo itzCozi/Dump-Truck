@@ -12,7 +12,8 @@ All arguments will always be listed in the wiki and `help` command though over c
 
 ## Extra
 [Wiki](https://github.com/itzCozi/Dump-Truck/wiki)  
-[Source](https://github.com/itzCozi/Dump-Truck/tree/main/DumpTruck)
+[Source](https://github.com/itzCozi/Dump-Truck/tree/main/DumpTruck)  
+[Compiler](https://pypi.org/project/auto-py-to-exe/)  
 
 ### Contact Me
 Discord: BadDevoleper#4200  

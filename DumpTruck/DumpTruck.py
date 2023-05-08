@@ -1,5 +1,6 @@
-# TODO: Add a folder dump command where a file will be created
+# TODO: Add a folder dump command where a folder will be created
 # with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
+# TODO: Add repo banner from pintrest just find the image again
 # TODO: Work on readme.md
 import os, sys
 import signal
@@ -84,20 +85,23 @@ hexdump (file): Dumps the hex of given file to hexdump.
 get-running (N/A): Records all running processes to processdump.
 kill-process (name): Kills the given process if detected running.
 libdump (N/A): Finds all .dll files and writes them to libdump.
+rm-running (process): Kills and deletes given running process.
 
 Below is an example of how to pass arguments to dump-truck:
 
   ____________Python Version____________
     python dump-truck.py hexdump TF2.exe
     python dump-truck.py libdump
+    python dump-truck.py rm-running steam.exe
     python dump-truck.py get-running
     python dump-truck.py kill-process discord
   
   ____________EXE Version____________
     ./dump-truck hexdump spotify.exe
     ./dump-truck libdump
+    ./dump-truck rm-running DyKnow.exe
     ./dump-truck get-running
-    ./dump-truck kill-process code
+    ./dump-truck kill-process chrome
     ''')
 
   def hexdump(file):
