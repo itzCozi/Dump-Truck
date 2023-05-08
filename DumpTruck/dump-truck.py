@@ -1,7 +1,7 @@
-# TODO: Add a folder dump command where a folder will be created
-# with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
+# TODO: Test and read through folderdump on home PC
+# TODO: Update help command's print statment
+# TODO: Release PDLparse to twine after review
 # TODO: Add repo banner from pintrest just find the image again
-# TODO: Work on readme.md
 import os, sys
 import signal
 import time
@@ -152,6 +152,30 @@ Below is an example of how to pass arguments to dump-truck:
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
+
+  def folderdump(folder):
+    # NEEDS TESTING ONCE HOME
+    if not os.path.exists(folder):
+      print(f'ERROR: Dumper cannot find directory {folder}.')
+      sys.exit(1)
+    output_dir = f'{os.getcwd()}/folderdump'
+    os.mkdir(output_dir)
+
+    for r, d, f in os.walk(folder):
+      for file in f:
+        os.mkdir(f'{output_dir}/{file}')
+        files.hexdump = f'{output_dir}/{files.hexdump}'
+        file_path = f'{r}/{file}'.replace('\\', '/')
+
+        if '.exe' or '.dll' or '.pyc' in file:
+          commands.hexdump(file_path)
+        if 'LICENSE' or 'license' in file:
+          license = file_path
+        if 'README' or 'readme' in file:
+          readme = file_path
+    
+    open(f'{output_dir}/LICENSE', 'w').write(open(license, 'r').read())
+    open(f'{output_dir}/README.md', 'w').write(open(readme, 'r').read())
 
   def removeRunning(process):
     # Kills a running process and then deletes it
