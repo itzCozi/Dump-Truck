@@ -1,6 +1,6 @@
 # TODO: Test and read through folderdump on home PC
 # TODO: Update help command's print statment
-# TODO: Release PDLparse to twine after review
+# TODO: Release PDLparse to twine after review (May 8th)
 # TODO: Add repo banner from pintrest just find the image again
 import os, sys
 import signal
@@ -163,8 +163,9 @@ Below is an example of how to pass arguments to dump-truck:
 
     for r, d, f in os.walk(folder):
       for file in f:
+        # Hexdump files are stored in a folder named after the source file
         os.mkdir(f'{output_dir}/{file}')
-        files.hexdump = f'{output_dir}/{files.hexdump}'
+        files.hexdump = f'{output_dir}/{file}/hexdump.txt'
         file_path = f'{r}/{file}'.replace('\\', '/')
 
         if '.exe' or '.dll' or '.pyc' in file:
