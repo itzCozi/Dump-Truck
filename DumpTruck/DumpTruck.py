@@ -1,8 +1,7 @@
 # TODO: Add a folder dump command where a file will be created
 # with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
-# TODO: Add remove-running command that will kill and delete 
+# TODO: Add rm-running command that will kill and delete 
 # given process if running or delete if not running
-# TODO: Create a help command
 # TODO: Work on readme.md
 import os, sys
 import signal
@@ -122,6 +121,7 @@ Below is an example of how to pass arguments to dump-truck:
   def getProcesses():
     # Get all running processes
     try:
+      st = time.time()
       iterated = set()
       retlist = []
       output = os.popen('wmic process get description, processid').read()
@@ -145,6 +145,7 @@ Below is an example of how to pass arguments to dump-truck:
         else:
           with open(files.processdump, 'a') as out:
             out.write(f'{item}\n')
+      print("--- %s seconds ---" % (time.time() - st))
       print(f'Running processes have been logged at {files.processdump}.')
 
     except Exception as e:
