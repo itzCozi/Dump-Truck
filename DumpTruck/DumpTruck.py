@@ -215,6 +215,7 @@ Below is an example of how to pass arguments to dump-truck:
 class driver:
 
   def argHandler():
+    # Made that dynamic arg handler yuhhh!
     if __file__.endswith('.py'):
       try:
         arg1 = sys.argv[1]
