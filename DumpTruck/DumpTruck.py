@@ -41,12 +41,11 @@ class utility:
           if itemobj and itemobj not in iterated:
             retlist.append(itemobj)
             iterated.add(itemobj)
-      
+
       return retlist
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
-
 
   def nameFinder(PID):
     output = os.popen(f'tasklist /svc /FI "PID eq {PID}"').read()
@@ -74,7 +73,7 @@ class utility:
 
 
 class commands:
-  
+
   def help():
     # Prints a lot of commands
     print(f'''
@@ -149,7 +148,7 @@ Below is an example of how to pass arguments to dump-truck:
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
-      
+
   def removeRunning(process):
     # Kills a running process and then deletes it
     proc_path = utility.processPath(process)
@@ -232,7 +231,7 @@ class driver:
     try:
       if arg1 == 'help':
         commands.help()
-        
+
       elif arg1 == 'hexdump':
         try:
           commands.hexdump(arg2)
