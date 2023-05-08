@@ -1,5 +1,6 @@
 # TODO: Add a folder dump command where a file will be created
 # with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
+# TODO: Try to speed up rm-running with try statments instead of if in block (ln 162)
 # TODO: Work on readme.md
 import os, sys
 import signal
@@ -157,7 +158,6 @@ Below is an example of how to pass arguments to dump-truck:
       process = f'{process}.exe'
     else:
       running = utility.getProcesses()
-      
       try:
         if process in running:
           commands.killProcess(process)
