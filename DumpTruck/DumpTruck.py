@@ -1,6 +1,7 @@
 # TODO: Add a folder dump command where a file will be created
 # with the .dll's, .exe's, A license (if found), A readme(if found) and exe hex-dumps
-# TODO: Add completion and other outputs to the console
+# TODO: Add remove-running command that will kill and delete 
+# given process if running or delete if not running
 # TODO: Create a help command
 # TODO: Work on readme.md
 import os, sys
@@ -42,6 +43,32 @@ class utility:
 
 
 class commands:
+  
+  def help():
+    # Prints a lot of commands
+    print(f'''
+Command | Args | Description
+----------------------------
+help (N/A): Displays/outputs this menu to the console.
+hexdump (file): Dumps the hex of given file to hexdump.
+get-running (N/A): Records all running processes to processdump.
+kill-process (name): Kills the given process if detected running.
+libdump (N/A): Finds all .dll files and writes them to libdump.
+
+Below is an example of how to pass arguments to dump-truck:
+
+  ____________Python Version____________
+    python dump-truck.py hexdump TF2.exe
+    python dump-truck.py libdump
+    python dump-truck.py get-running
+    python dump-truck.py kill-process discord
+  
+  ____________EXE Version____________
+    ./dump-truck hexdump spotify.exe
+    ./dump-truck libdump
+    ./dump-truck get-running
+    ./dump-truck kill-process code
+    ''')
 
   def hexdump(file):
     # Creates a hex dump from given file
@@ -72,15 +99,16 @@ class commands:
           out.write('\n')
       print(f'Hexdump created on {file} at {files.hexdump}.')
 
-  def dumplibs():
+  def libdump():
     # Gets all .dll files on base_dir
     try:
       dll_list = []
       base_dir = 'C:'
       for r, d, f in os.walk(base_dir):
+        r = r.replace('C:', 'C:/')
         for file in f:
           if file.endswith('.dll'):
-            item = f'{r}/{file}'
+            item = f'{r}/{file}'.replace('\\', '/')
             dll_list.append(item)
 
       with open(files.libdump, 'a') as out:
@@ -154,7 +182,10 @@ class driver:
         pass
 
     try:
-      if arg1 == 'hexdump':
+      if arg1 == 'help':
+        commands.help()
+        
+      elif arg1 == 'hexdump':
         try:
           commands.hexdump(arg2)
         except Exception as e:
@@ -164,14 +195,14 @@ class driver:
           else:
             print(f'ERROR: An unknown error was encountered. \n{e}\n')
             sys.exit(1)
-      elif arg1 == 'dumplibs':
+      elif arg1 == 'libdump':
         try:
-          commands.dumplibs()
+          commands.libdump()
           sys.exit(0)
         except Exception as e:
           print(f'ERROR: An unknown error was encountered. \n{e}\n')
           sys.exit(1)
-      elif arg1 == 'get-processes':
+      elif arg1 == 'get-running':
         try:
           commands.getProcesses()
           sys.exit(0)
