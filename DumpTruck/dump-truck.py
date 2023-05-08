@@ -8,9 +8,9 @@ import time
 
 
 class files:
-  hexdump = f'{os.getcwd()}/hexdump.txt'
-  libdump = f'{os.getcwd()}/libdump.txt'
-  processdump = f'{os.getcwd()}/processdump.txt'
+  hexdump = f'{os.getcwd()}/hexdump.txt'.replace('\\', '/')
+  libdump = f'{os.getcwd()}/libdump.txt'.replace('\\', '/')
+  processdump = f'{os.getcwd()}/processdump.txt'.replace('\\', '/')
 
 
 class utility:
@@ -154,7 +154,7 @@ Below is an example of how to pass arguments to dump-truck:
       sys.exit(1)
 
   def folderdump(folder):
-    # NEEDS TESTING ONCE HOME
+    # Gets all files in folder and dumps them
     if not os.path.exists(folder):
       print(f'ERROR: Dumper cannot find directory {folder}.')
       sys.exit(1)
@@ -164,19 +164,25 @@ Below is an example of how to pass arguments to dump-truck:
     for r, d, f in os.walk(folder):
       for file in f:
         # Hexdump files are stored in a folder named after the source file
-        os.mkdir(f'{output_dir}/{file}')
+        if file.endswith('.exe') or file.endswith('.dll'):
+          os.mkdir(f'{output_dir}/{file}')
         files.hexdump = f'{output_dir}/{file}/hexdump.txt'
         file_path = f'{r}/{file}'.replace('\\', '/')
 
-        if '.exe' or '.dll' or '.pyc' in file:
+        if file.endswith('.exe') or file.endswith('.dll'):
           commands.hexdump(file_path)
-        if 'LICENSE' or 'license' in file:
+        elif 'LICENSE' in file:
           license = file_path
-        if 'README' or 'readme' in file:
+          with open(license, 'r') as f1:
+            l_content = f1.read()
+          open(f'{output_dir}/LICENSE', 'w').write(l_content)
+        elif 'README' in file:
           readme = file_path
-    
-    open(f'{output_dir}/LICENSE', 'w').write(open(license, 'r').read())
-    open(f'{output_dir}/README.md', 'w').write(open(readme, 'r').read())
+          with open(readme, 'r') as f2:
+            r_content = f2.read()
+          open(f'{output_dir}/README.md', 'w').write(r_content)
+
+    print(f'\nDumped folder and created output at {output_dir}.')
 
   def removeRunning(process):
     # Kills a running process and then deletes it
@@ -276,6 +282,16 @@ class driver:
         try:
           commands.libdump()
           sys.exit(0)
+        except Exception as e:
+          print(f'ERROR: An unknown error was encountered. \n{e}\n')
+          sys.exit(1)
+      elif arg1 == 'folderdump':
+        try:
+          commands.folderdump(arg2)
+          sys.exit(0)
+        except FileExistsError:
+          print('ERROR: A dumpfolder already exists in this directory.')
+          sys.exit(1)
         except Exception as e:
           print(f'ERROR: An unknown error was encountered. \n{e}\n')
           sys.exit(1)
