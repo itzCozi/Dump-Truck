@@ -322,6 +322,14 @@ class driver:
         except Exception as e:
           print(f'ERROR: A runtime error occurred, is the process running? \n{e}\n')
           sys.exit(1)
+      elif arg1 == 'find-process':
+        # TEST TODAY May 9th
+        try:
+          print(utility.processPath(arg2))
+          sys.exit(0)
+        except Exception as e:
+          print(f'ERROR: A runtime error occurred, is the process running? \n{e}\n')
+          sys.exit(1)
 
       else:
         print('ERROR: The given argument is not recognized, try the help command.')
