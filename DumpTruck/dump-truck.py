@@ -1,7 +1,4 @@
-# TODO: Test and read through folderdump on home PC
-# TODO: Update help command's print statment
-# TODO: Release PDLparse to twine after review (May 8th)
-# TODO: Add repo/readme banner from pintrest just find the image again
+# TODO: Update commands and arguments wiki page
 import os, sys
 import signal
 import time
@@ -83,6 +80,7 @@ Command | Args | Description
 help (N/A): Displays/outputs this menu to the console.
 hexdump (file): Dumps the hex of given file to hexdump.
 get-running (N/A): Records all running processes to processdump.
+folderdump (dir): Dumps all files in a folder to output folder.
 kill-process (name): Kills the given process if detected running.
 libdump (N/A): Finds all .dll files and writes them to libdump.
 rm-running (process): Kills and deletes given running process.
@@ -92,6 +90,7 @@ Below is an example of how to pass arguments to dump-truck:
   ____________Python Version____________
     python dump-truck.py hexdump TF2.exe
     python dump-truck.py libdump
+    python dump-truck.py folderdump Desktop/JTSP
     python dump-truck.py rm-running steam.exe
     python dump-truck.py get-running
     python dump-truck.py kill-process discord
@@ -99,6 +98,7 @@ Below is an example of how to pass arguments to dump-truck:
   ____________EXE Version____________
     ./dump-truck hexdump spotify.exe
     ./dump-truck libdump
+    ./dump-truck folderdump Desktop/JTSP
     ./dump-truck rm-running DyKnow.exe
     ./dump-truck get-running
     ./dump-truck kill-process chrome
