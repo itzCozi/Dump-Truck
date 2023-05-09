@@ -1,4 +1,3 @@
-# TODO: Update commands and arguments wiki page
 import os, sys
 import signal
 import time
@@ -103,6 +102,7 @@ Below is an example of how to pass arguments to dump-truck:
     ./dump-truck get-running
     ./dump-truck kill-process chrome
     ''')
+    sys.exit(0)
 
   def hexdump(file):
     # Creates a hex dump from given file
