@@ -86,24 +86,33 @@ folderdump (dir): Dumps all files in a folder to output folder.
 kill-process (name): Kills the given process if detected running.
 libdump (N/A): Finds all .dll files and writes them to libdump.
 rm-running (process): Kills and deletes given running process.
+find-process (process): Prints the path of the given executable.
+getPID (name): Outputs the PID of the input if running as process.
+getNAME (PID): Returns the name of given process ID.
 
 Below is an example of how to pass arguments to dump-truck:
 
   ____________Python Version____________
     python dump-truck.py hexdump TF2.exe
     python dump-truck.py libdump
+    python dump-truck.py getNAME 8294
     python dump-truck.py folderdump Desktop/JTSP
     python dump-truck.py rm-running steam.exe
+    python dump-truck.py getPID firefox
     python dump-truck.py get-running
     python dump-truck.py kill-process discord
+    python dump-truck.py find-process notepad++
   
   ____________EXE Version____________
     ./dump-truck hexdump spotify.exe
     ./dump-truck libdump
+    ./dump-truck getNAME 8294
     ./dump-truck folderdump Desktop/JTSP
+    ./dump-truck getPID code
     ./dump-truck rm-running DyKnow.exe
     ./dump-truck get-running
     ./dump-truck kill-process chrome
+    ./dump-truck find-process notepad++
     ''')
     sys.exit(0)
 
@@ -331,6 +340,20 @@ class driver:
           sys.exit(0)
         except Exception as e:
           print(f'ERROR: A runtime error occurred, is the process running? \n{e}\n')
+          sys.exit(1)
+      elif arg1 == 'getPID':
+        try:
+          print(utility.getPID(arg2))
+          sys.exit(0)
+        except Exception as e:
+          print(f'ERROR: Did you input the correct process name after the command. \n{e}\n')
+          sys.exit(1)
+      elif arg1 == 'getNAME':
+        try:
+          print(utility.nameFinder(arg2))
+          sys.exit(0)
+        except Exception as e:
+          print(f'ERROR: Did you enter a valid PID after the command. \n{e}\n')
           sys.exit(1)
 
       else:
