@@ -1,3 +1,6 @@
+# TODO: Add find-process to help command (ln 326)
+# TODO: Please look over all code and reformat/review
+
 import os, sys
 import signal
 import time
@@ -323,7 +326,6 @@ class driver:
           print(f'ERROR: A runtime error occurred, is the process running? \n{e}\n')
           sys.exit(1)
       elif arg1 == 'find-process':
-        # TEST TODAY May 9th
         try:
           print(utility.processPath(arg2))
           sys.exit(0)
