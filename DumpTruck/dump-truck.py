@@ -79,6 +79,7 @@ Command | Args | Description
 help (N/A): Displays/outputs this menu to the console.
 hexdump (file): Dumps the hex of given file to hexdump.
 get-running (N/A): Records all running processes to processdump.
+print-running (N/A): Prints all of the running processes. 
 folderdump (dir): Dumps all files in a folder to output folder.
 kill-process (name): Kills the given process if detected running.
 libdump (N/A): Finds all .dll files and writes them to libdump.
@@ -97,6 +98,7 @@ Below is an example of how to pass arguments to dump-truck:
     python dump-truck.py rm-running steam.exe
     python dump-truck.py getPID firefox
     python dump-truck.py get-running
+    python dump-truck.py print-running
     python dump-truck.py kill-process discord
     python dump-truck.py find-process notepad++
   
@@ -106,6 +108,7 @@ Below is an example of how to pass arguments to dump-truck:
     ./dump-truck getNAME 8294
     ./dump-truck folderdump Desktop/JTSP
     ./dump-truck getPID code
+    ./dump-truck print-running
     ./dump-truck rm-running DyKnow.exe
     ./dump-truck get-running
     ./dump-truck kill-process chrome
@@ -320,6 +323,13 @@ class driver:
       elif arg1 == 'get-running':
         try:
           commands.getRunning()
+          sys.exit(0)
+        except Exception as e:
+          print(f'ERROR: An unknown error was encountered. \n{e}\n')
+          sys.exit(1)
+      elif arg1 == 'print-running':
+        try:
+          print(utility.getProcesses())
           sys.exit(0)
         except Exception as e:
           print(f'ERROR: An unknown error was encountered. \n{e}\n')
