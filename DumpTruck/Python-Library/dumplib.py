@@ -1,6 +1,4 @@
 # NOTE: This file is made for importing from so a user can operate the dump-truck commands through python code.
-# TODO: Please rewrite functions to not print to files or console instead return important values.
-# TODO: Replace exception prints to raise errors also remove the files class after the above todo is done.
 
 import os, sys
 import signal
@@ -22,7 +20,7 @@ def processPath(process):
       if os.path.exists(line):
         return line
   except Exception as e:
-    print(f'ERROR: An unknown error was encountered. \n{e}\n')
+    raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
     sys.exit(1)
 
 
@@ -31,7 +29,6 @@ def getProcesses():
     iterated = set()
     retlist = []
     output = os.popen('wmic process get description, processid').read()
-    print('Please wait this may take a moment...')
 
     for line in output.splitlines():
       if '.exe' in line:
@@ -44,7 +41,7 @@ def getProcesses():
 
     return retlist
   except Exception as e:
-    print(f'ERROR: An unknown error was encountered. \n{e}\n')
+    raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
     sys.exit(1)
 
 
@@ -70,14 +67,14 @@ def getPID(process):
         retlist.append(list[-1].replace(' ', ''))
     return retlist
   except Exception as e:
-    print(f'ERROR: An unknown error was encountered. \n{e}\n')
+    raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
     sys.exit(1)
 
 
 def hexdump(file):
   # Creates a hex dump from given file
   if not os.path.exists(file):
-    print(f'ERROR: Dumper cannot find file {file}.')
+    raise FileNotFoundError(f'ERROR: Dumper cannot find file {file}.')
     sys.exit(1)
 
   with open(file, 'rb') as f:
@@ -100,7 +97,6 @@ def hexdump(file):
             out.write('*')
         line = []
         out.write('\n')
-    print(f'Hexdump created on {file} at {files.hexdump}.')
 
 
 def libdump():
@@ -115,19 +111,16 @@ def libdump():
           item = f'{r}/{file}'.replace('\\', '/')
           dll_list.append(item)
 
-    with open(files.libdump, 'a') as out:
-      for item in dll_list:
-        out.write(f'{item}\n')
-      print(f'Library dump created for {base_dir} at {files.libdump}.')
+    return dll_list
   except Exception as e:
-    print(f'ERROR: An unknown error was encountered. \n{e}\n')
+    raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
     sys.exit(1)
 
 
 def folderdump(folder):
   # Gets all files in folder and dumps them
   if not os.path.exists(folder):
-    print(f'ERROR: Dumper cannot find directory {folder}.')
+    raise FileNotFoundError(f'ERROR: Dumper cannot find directory {folder}.')
     sys.exit(1)
   output_dir = f'{os.getcwd()}/folderdump'
   os.mkdir(output_dir)
@@ -153,8 +146,6 @@ def folderdump(folder):
           r_content = f2.read()
         open(f'{output_dir}/README.md', 'w').write(r_content)
 
-  print(f'\nDumped folder and created output at {output_dir}.')
-
 
 def removeRunning(process):
   # Kills a running process and then deletes it
@@ -170,52 +161,18 @@ def removeRunning(process):
       time.sleep(0.5)
       os.remove(proc_path)
     except Exception as e:
-      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
 
 
-def getRunning():
-  # Get all running processes
-  try:
-    iterated = set()
-    retlist = []
-    output = os.popen('wmic process get description, processid').read()
-    print('Please wait this may take a moment...')
-    for line in output.splitlines():
-      if '.exe' in line:
-        index = line.find('.exe')
-        item = line[index + 5:].replace(' ', '')
-        itemobj = nameFinder(item)
-        if not itemobj in iterated:
-          retlist.append(itemobj)
-        else:
-          continue
-        iterated.add(itemobj)
-      else:
-        output = output.replace(line, '')
-
-    for item in retlist:
-      if item == None:
-        retlist.remove(item)
-      else:
-        with open(files.processdump, 'a') as out:
-          out.write(f'{item}\n')
-    print(f'Running processes have been logged at {files.processdump}.')
-
-  except Exception as e:
-    print(f'ERROR: An unknown error was encountered. \n{e}\n')
-    sys.exit(1)
-
-
 def killProcess(name):
-  # Ends given process and prints completion
+  # Ends given process
   if name.endswith('.exe'):
     name = name.replace('.exe', '')
   PIDlist = getPID(name)
   for PID in PIDlist:
     try:
       os.kill(int(PID), signal.SIGTERM)
-      print(f'Process {name} has been killed.')
     except Exception as e:
-      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
       sys.exit(1)
