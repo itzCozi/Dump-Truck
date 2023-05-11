@@ -1,6 +1,3 @@
-# TODO: Add find-process to help command (ln 326)
-# TODO: Please look over all code and reformat/review
-
 import os, sys
 import signal
 import time
