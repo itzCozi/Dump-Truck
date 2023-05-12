@@ -14,6 +14,7 @@ class files:
 class library:
 
   def processPath(process):
+    # Prints the given processes path
     if '.exe' in process:
       process = process[:-4]
     try:
@@ -25,6 +26,7 @@ class library:
       raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
 
   def getProcesses():
+    # Outputs a list of all running processes
     try:
       iterated = set()
       retlist = []
@@ -44,6 +46,7 @@ class library:
       raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
 
   def getNAME(PID):
+    # Returns the name of a process
     output = os.popen(f'tasklist /svc /FI "PID eq {PID}"').read()
     for line in str(output).splitlines():
       if '.exe' in line:
@@ -53,6 +56,7 @@ class library:
         return retvalue
 
   def getPID(process):
+    # Gets the PID of a running process
     try:
       retlist = []
       output = os.popen(f'powershell ps -Name {process}').read()
