@@ -107,10 +107,10 @@ Below is an example of how to pass arguments to dump-truck:
     ./dump-truck libdump
     ./dump-truck getNAME 8294
     ./dump-truck folderdump Desktop/JTSP
-    ./dump-truck getPID code
-    ./dump-truck print-running
     ./dump-truck rm-running DyKnow.exe
+    ./dump-truck getPID code
     ./dump-truck get-running
+    ./dump-truck print-running
     ./dump-truck kill-process chrome
     ./dump-truck find-process notepad++
     ''')
