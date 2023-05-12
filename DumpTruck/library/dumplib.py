@@ -21,7 +21,6 @@ def processPath(process):
         return line
   except Exception as e:
     raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
-    sys.exit(1)
 
 
 def getProcesses():
@@ -42,7 +41,6 @@ def getProcesses():
     return retlist
   except Exception as e:
     raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
-    sys.exit(1)
 
 
 def nameFinder(PID):
@@ -68,15 +66,13 @@ def getPID(process):
     return retlist
   except Exception as e:
     raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
-    sys.exit(1)
 
 
 def hexdump(file):
   # Creates a hex dump from given file
   if not os.path.exists(file):
     raise FileNotFoundError(f'ERROR: Dumper cannot find file {file}.')
-    sys.exit(1)
-
+  
   with open(file, 'rb') as f:
     content = f.read()
     bytes = 0
@@ -114,14 +110,12 @@ def libdump():
     return dll_list
   except Exception as e:
     raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
-    sys.exit(1)
 
 
 def folderdump(folder):
   # Gets all files in folder and dumps them
   if not os.path.exists(folder):
     raise FileNotFoundError(f'ERROR: Dumper cannot find directory {folder}.')
-    sys.exit(1)
   output_dir = f'{os.getcwd()}/folderdump'
   os.mkdir(output_dir)
 
@@ -162,7 +156,6 @@ def removeRunning(process):
       os.remove(proc_path)
     except Exception as e:
       raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
-      sys.exit(1)
 
 
 def killProcess(name):
@@ -175,4 +168,3 @@ def killProcess(name):
       os.kill(int(PID), signal.SIGTERM)
     except Exception as e:
       raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
-      sys.exit(1)
