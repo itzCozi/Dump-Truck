@@ -5,6 +5,7 @@ import time
 
 class files:
   hexdump = f'{os.getcwd()}/hexdump.txt'.replace('\\', '/')
+  tempdump = f'{os.getcwd()}/tempdump.txt'.replace('\\', '/')
   libdump = f'{os.getcwd()}/libdump.txt'.replace('\\', '/')
   processdump = f'{os.getcwd()}/processdump.txt'.replace('\\', '/')
 
@@ -12,6 +13,7 @@ class files:
 class utility:
 
   def processPath(process):
+    # Returns the running processes path
     if '.exe' in process:
       process = process[:-4]
     try:
@@ -24,6 +26,7 @@ class utility:
       sys.exit(1)
 
   def getProcesses():
+    # Outputs all running processes
     try:
       iterated = set()
       retlist = []
@@ -45,6 +48,7 @@ class utility:
       sys.exit(1)
 
   def nameFinder(PID):
+    # Gets a process name from PID
     output = os.popen(f'tasklist /svc /FI "PID eq {PID}"').read()
     for line in str(output).splitlines():
       if '.exe' in line:
@@ -54,6 +58,7 @@ class utility:
         return retvalue
 
   def getPID(process):
+    # Returns a process PID from name
     try:
       retlist = []
       output = os.popen(f'powershell ps -Name {process}').read()
@@ -145,6 +150,28 @@ Below is an example of how to pass arguments to dump-truck:
           out.write('\n')
       print(f'Hexdump created on {file} at {files.hexdump}.')
 
+  def tempdump(): # Add to help command and wiki
+    # Dumps all files in temp directory 
+    win_files = []
+    user_files = []
+    win_temp = 'C:/Windows/Temp'
+    user_temp = f'C:/Users/{os.getlogin()}/AppData/Local/Temp'
+    for wr, wd, wf in os.walk(win_temp):
+      for winfile in wf:
+        foo = f'{wr}/{winfile}'
+        win_files.append(foo)
+    for ur, ud, uf in os.walk(user_temp):
+      for tempfile in uf:
+        bar = f'{ur}/{tempfile}'
+        user_files.append(bar)
+        
+    with open(files.tempdump, 'a') as out:
+      for file in win_files:
+        out.write(f'{file}\n'.replace('\\', '/'))
+      for file2 in user_files:
+        out.write(f'{file2}\n'.replace('\\', '/'))
+      print(f'Tempdump created at {files.tempdump}.')
+        
   def libdump():
     # Gets all .dll files on base_dir
     try:
@@ -166,7 +193,7 @@ Below is an example of how to pass arguments to dump-truck:
       sys.exit(1)
 
   def folderdump(folder):
-    # Gets all files in folder and dumps them
+    # Gets all files in given folder and dumps them
     if not os.path.exists(folder):
       print(f'ERROR: Dumper cannot find directory {folder}.')
       sys.exit(1)
@@ -180,7 +207,11 @@ Below is an example of how to pass arguments to dump-truck:
           os.mkdir(f'{output_dir}/{file}')
         files.hexdump = f'{output_dir}/{file}/hexdump.txt'
         file_path = f'{r}/{file}'.replace('\\', '/')
-
+        manifest = f'{output_dir}/MANIFEST'
+        
+        with open(manifest, 'a') as log:
+          log.write(f'{file}\n')
+          
         if file.endswith('.exe') or file.endswith('.dll'):
           commands.hexdump(file_path)
         elif 'LICENSE' in file:
@@ -290,6 +321,13 @@ class driver:
           else:
             print(f'ERROR: An unknown error was encountered. \n{e}\n')
             sys.exit(1)
+      elif arg1 == 'tempdump':
+        try:
+          commands.tempdump()
+          sys.exit(0)
+        except Exception as e:
+          print(f'ERROR: An unknown error was encountered. \n{e}\n')
+          sys.exit(1)
       elif arg1 == 'libdump':
         try:
           commands.libdump()

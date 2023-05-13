@@ -96,6 +96,22 @@ class library:
           line = []
           out.write('\n')
 
+  def tempdump():
+    # Dumps all files in temp directory 
+    win_files = []
+    user_files = []
+    win_temp = 'C:/Windows/Temp'
+    user_temp = f'C:/Users/{os.getlogin()}/AppData/Local/Temp'
+    for wr, wd, wf in os.walk(win_temp):
+      for winfile in wf:
+        foo = f'{wr}/{winfile}'
+        win_files.append(foo.replace('\\', '/'))
+    for ur, ud, uf in os.walk(user_temp):
+      for tempfile in uf:
+        bar = f'{ur}/{tempfile}'
+        user_files.append(bar.replace('\\', '/'))
+    return win_files + user_files
+
   def libdump():
     # Gets all .dll files on base_dir
     try:
