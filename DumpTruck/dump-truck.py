@@ -88,6 +88,7 @@ print-running (N/A): Prints all of the running processes.
 folderdump (dir): Dumps all files in a folder to output folder.
 kill-process (name): Kills the given process if detected running.
 libdump (N/A): Finds all .dll files and writes them to libdump.
+tempdump (N\A): Dumps all temp files to a .txt file.
 rm-running (process): Kills and deletes given running process.
 find-process (process): Prints the path of the given executable.
 getPID (name): Outputs the PID of the input if running as process.
@@ -106,6 +107,7 @@ Below is an example of how to pass arguments to dump-truck:
     python dump-truck.py print-running
     python dump-truck.py kill-process discord
     python dump-truck.py find-process notepad++
+    python dump-truck.py tempdump
   
   ____________EXE Version____________
     ./dump-truck hexdump spotify.exe
@@ -118,6 +120,7 @@ Below is an example of how to pass arguments to dump-truck:
     ./dump-truck print-running
     ./dump-truck kill-process chrome
     ./dump-truck find-process notepad++
+    ./dump-truck tempdump
     ''')
     sys.exit(0)
 
@@ -131,6 +134,7 @@ Below is an example of how to pass arguments to dump-truck:
       content = f.read()
       bytes = 0
       line = []
+    f.close()
 
     with open(files.hexdump, 'a') as out:
       for byte in content:
@@ -148,10 +152,11 @@ Below is an example of how to pass arguments to dump-truck:
               out.write('*')
           line = []
           out.write('\n')
+      out.close()
       print(f'Hexdump created on {file} at {files.hexdump}.')
 
-  def tempdump(): # Add to help command and wiki
-    # Dumps all files in temp directory 
+  def tempdump():  # Add to (Commands&Arguments) wiki
+    # Dumps all files in temp directorys
     win_files = []
     user_files = []
     win_temp = 'C:/Windows/Temp'
@@ -164,14 +169,15 @@ Below is an example of how to pass arguments to dump-truck:
       for tempfile in uf:
         bar = f'{ur}/{tempfile}'
         user_files.append(bar)
-        
+
     with open(files.tempdump, 'a') as out:
       for file in win_files:
         out.write(f'{file}\n'.replace('\\', '/'))
       for file2 in user_files:
         out.write(f'{file2}\n'.replace('\\', '/'))
+      out.close()
       print(f'Tempdump created at {files.tempdump}.')
-        
+
   def libdump():
     # Gets all .dll files on base_dir
     try:
@@ -187,6 +193,7 @@ Below is an example of how to pass arguments to dump-truck:
       with open(files.libdump, 'a') as out:
         for item in dll_list:
           out.write(f'{item}\n')
+        out.close()
         print(f'Library dump created for {base_dir} at {files.libdump}.')
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
@@ -208,41 +215,43 @@ Below is an example of how to pass arguments to dump-truck:
         files.hexdump = f'{output_dir}/{file}/hexdump.txt'
         file_path = f'{r}/{file}'.replace('\\', '/')
         manifest = f'{output_dir}/MANIFEST'
-        
+
         with open(manifest, 'a') as log:
           log.write(f'{file}\n')
-          
+        log.close()
+
         if file.endswith('.exe') or file.endswith('.dll'):
           commands.hexdump(file_path)
         elif 'LICENSE' in file:
           license = file_path
           with open(license, 'r') as f1:
             l_content = f1.read()
+          f1.close()
           open(f'{output_dir}/LICENSE', 'w').write(l_content)
         elif 'README' in file:
           readme = file_path
           with open(readme, 'r') as f2:
             r_content = f2.read()
+          f2.close()
           open(f'{output_dir}/README.md', 'w').write(r_content)
-
-    print(f'\nDumped folder and created output at {output_dir}.')
+    print(f'Dumped folder and created output at {output_dir}.')
 
   def removeRunning(process):
     # Kills a running process and then deletes it
-    proc_path = utility.processPath(process)
     if not '.exe' in process:
       process = f'{process}.exe'
-    else:
+    proc_path = utility.processPath(process)
+
+    try:
       try:
-        try:
-          commands.killProcess(process)
-        except:
-          pass
-        time.sleep(0.5)
-        os.remove(proc_path)
-      except Exception as e:
-        print(f'ERROR: An unknown error was encountered. \n{e}\n')
-        sys.exit(1)
+        commands.killProcess(process)
+      except:
+        pass
+      time.sleep(0.5)
+      os.remove(proc_path)
+    except Exception as e:
+      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      sys.exit(1)
 
   def getRunning():
     # Get all running processes
@@ -270,6 +279,7 @@ Below is an example of how to pass arguments to dump-truck:
         else:
           with open(files.processdump, 'a') as out:
             out.write(f'{item}\n')
+          out.close()
       print(f'Running processes have been logged at {files.processdump}.')
 
     except Exception as e:
@@ -294,30 +304,28 @@ class driver:
 
   def argHandler():
     # Made that dynamic arg handler yuhhh!
-    if __file__.endswith('.py'):
-      try:
+    try:
+      if __file__.endswith('.py'):
         arg1 = sys.argv[1]
         arg2 = sys.argv[2]
-      except:
-        pass
-    if __file__.endswith('.exe'):
-      try:
+      if __file__.endswith('.exe'):
         arg1 = sys.argv[0]
         arg2 = sys.argv[1]
-      except:
-        pass
+    except:
+      pass
 
     try:
       if arg1 == 'help':
         commands.help()
-
+        sys.exit(0)
       elif arg1 == 'hexdump':
         try:
           commands.hexdump(arg2)
+          sys.exit(0)
         except Exception as e:
           if not os.path.exists(arg2):
             print(f'ERROR: Dumper cannot find {arg2} in file-system.')
-            sys.exit(0)
+            sys.exit(1)
           else:
             print(f'ERROR: An unknown error was encountered. \n{e}\n')
             sys.exit(1)
@@ -347,10 +355,8 @@ class driver:
           sys.exit(1)
       elif arg1 == 'rm-running':
         try:
-          if not arg2.endswith('.exe'):
-            print(f'ERROR: To use rm-running you must pass a .exe file.')
-            sys.exit(0)
           commands.removeRunning(arg2)
+          sys.exit(0)
         except Exception as e:
           if not os.path.exists(arg2):
             print(f'ERROR: Dumper cannot find {arg2} in file-system.')
@@ -409,10 +415,11 @@ class driver:
       print('ERROR: Action executed without required permissions.')
       sys.exit(1)
     except UnboundLocalError:
-      print('ERROR: Please try again with all required parameters.')
+      print('ERROR: Please try again with a valid argument.')
       sys.exit(1)
     except Exception as e:
       print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      sys.exit(1)
 
 
 if __name__ == '__main__':

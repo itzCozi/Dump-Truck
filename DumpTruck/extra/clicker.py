@@ -14,7 +14,7 @@ def loop():
   elif rORl == 'r':
     rORl = 'right'
   else:
-    print(f'The given input {rORl} is not vaild.')
+    print(f'The given input {rORl} is not valid.')
     time.sleep(2)
     loop()
 
