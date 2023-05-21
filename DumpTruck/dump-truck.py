@@ -378,7 +378,7 @@ class driver:
         except Exception as e:
           print(f'ERROR: An unknown error was encountered. \n{e}\n')
           sys.exit(1)
-      elif arg1 == 'kill-process':
+      elif arg1 == 'kill-process' or 'kill':
         try:
           commands.killProcess(arg2)
           sys.exit(0)
