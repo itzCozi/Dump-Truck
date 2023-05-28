@@ -72,8 +72,8 @@ class utility:
           list = diffrence.split('  ')
           retlist.append(list[-1].replace(' ', ''))
       return retlist
-    except Exception as e:
-      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+    except Exception:
+      print(f'ERROR: Cannot find process {process}.')
       sys.exit(1)
 
 
