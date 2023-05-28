@@ -59,12 +59,15 @@ class utility:
 
   def getPID(process):
     # Returns a process PID from name
+    if '.exe' in process:
+      process = process.replace('.exe', '')
     try:
       retlist = []
       output = os.popen(f'powershell ps -Name {process}').read()
       for line in output.splitlines():
+        if '(' in line:
+          index = line.find('  SI ')
         if '.' in line:
-          index = line.find('  1 ')
           diffrence = line[0:index]
           list = diffrence.split('  ')
           retlist.append(list[-1].replace(' ', ''))

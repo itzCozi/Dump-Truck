@@ -56,19 +56,23 @@ class library:
         return retvalue
 
   def getPID(process):
-    # Gets the PID of a running process
+    # Returns a process PID from name
+    if '.exe' in process:
+      process = process.replace('.exe', '')
     try:
       retlist = []
       output = os.popen(f'powershell ps -Name {process}').read()
       for line in output.splitlines():
+        if '(' in line:
+          index = line.find('  SI ')
         if '.' in line:
-          index = line.find('  1 ')
           diffrence = line[0:index]
           list = diffrence.split('  ')
           retlist.append(list[-1].replace(' ', ''))
       return retlist
     except Exception as e:
-      raise Exception(f'ERROR: An unknown error was encountered. \n{e}\n')
+      print(f'ERROR: An unknown error was encountered. \n{e}\n')
+      sys.exit(1)
 
   def hexdump(file):
     # Creates a hex dump from given file
