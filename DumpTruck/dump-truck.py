@@ -59,25 +59,24 @@ class utility:
 
   # So for some fucking reason this will print the PIDs but 
   # when called through argHandler() it wont print the PIDs but both crash the target program
-  
-  #def getPID(process):
-  #  # Returns a process PID from name
-  #  if '.exe' in process:
-  #    process = process.replace('.exe', '')
-  #  try:
-  #    retlist = []
-  #    output = os.popen(f'powershell ps -Name {process}').read()
-  #    for line in output.splitlines():
-  #      if '(' in line:
-  #        index = line.find('  SI ')
-  #      if '.' in line:
-  #        diffrence = line[0:index]
-  #        list = diffrence.split('  ')
-  #        retlist.append(list[-1].replace(' ', ''))
-  #    return retlist
-  #  except Exception:
-  #    print(f'ERROR: Cannot find process {process}.')
-  #    sys.exit(1)
+  def getPID(process):
+    # Returns a process PID from name
+    if '.exe' in process:
+      process = process.replace('.exe', '')
+    try:
+      retlist = []
+      output = os.popen(f'powershell Get-Process -Name {process}').read()
+      for line in output.splitlines():
+        if '  SI ' in line:
+          index = line.find('  SI ')
+        if '.' in line:
+          diffrence = line[:index]
+          proc_info = diffrence.split()[-1].replace(' ', '')
+          retlist.append(proc_info)
+      return retlist
+    except Exception:
+        print(f'ERROR: Cannot find process {process}.')
+        sys.exit(1)
 
 
 class commands:
@@ -398,13 +397,13 @@ class driver:
         except Exception as e:
           print(f'ERROR: A runtime error occurred, is the process running? \n{e}\n')
           sys.exit(1)
-      #elif arg1 == 'getPID':
-      #  try:
-      #    print(utility.getPID(arg2))
-      #    sys.exit(0)
-      #  except Exception as e:
-      #    print(f'ERROR: Did you input the correct process name after the command. \n{e}\n')
-      #    sys.exit(1)
+      elif arg1 == 'getPID':
+        try:
+          print(utility.getPID(arg2))
+          sys.exit(0)
+        except Exception as e:
+          print(f'ERROR: Did you input the correct process name after the command. \n{e}\n')
+          sys.exit(1)
       elif arg1 == 'getNAME':
         try:
           print(utility.nameFinder(arg2))
